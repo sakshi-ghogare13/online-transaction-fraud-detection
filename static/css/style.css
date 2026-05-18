@@ -1,8 +1,3 @@
-/* =========================================
-   FRAUDSHIELD AI - FINAL COMPLETE CSS
-   Premium Dark Fintech UI
-========================================= */
-
 :root{
     --bg:#06111b;
     --bg-soft:#0b1723;
@@ -30,12 +25,8 @@
     --shadow:0 18px 45px rgba(0,0,0,0.32);
 
     --font-body:"Plus Jakarta Sans", system-ui, sans-serif;
---font-display:"Satoshi", "Plus Jakarta Sans", sans-serif;
+    --font-display:"Plus Jakarta Sans", system-ui, sans-serif;
 }
-
-/* =========================
-   Reset
-========================= */
 
 *{
     margin:0;
@@ -52,28 +43,11 @@ body{
     min-height:100vh;
     font-family:var(--font-body);
     color:var(--text);
-
     background-color:#06111b;
-
     background-image:
-        radial-gradient(
-            circle at top right,
-            rgba(94,220,255,0.10),
-            transparent 28%
-        ),
-
-        radial-gradient(
-            circle at bottom left,
-            rgba(34,191,247,0.08),
-            transparent 28%
-        ),
-
-        linear-gradient(
-            180deg,
-            #06111b 0%,
-            #07131e 100%
-        );
-
+        radial-gradient(circle at top right, rgba(94,220,255,0.10), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(34,191,247,0.08), transparent 28%),
+        linear-gradient(180deg, #06111b 0%, #07131e 100%);
     overflow-x:hidden;
 }
 
@@ -87,10 +61,6 @@ input,
 select{
     font:inherit;
 }
-
-/* =========================
-   Background Glows
-========================= */
 
 .bg-blur{
     position:fixed;
@@ -117,32 +87,19 @@ select{
     left:-90px;
 }
 
-/* =========================
-   Common Components
-========================= */
-
 .glass-card{
-    background:
-        linear-gradient(
-            180deg,
-            rgba(18,32,48,0.92),
-            rgba(11,22,34,0.92)
-        );
-
+    background:linear-gradient(180deg, rgba(18,32,48,0.92), rgba(11,22,34,0.92));
     border:1px solid rgba(255,255,255,0.07);
-
     border-radius:28px;
-
-    box-shadow:
-        0 25px 60px rgba(0,0,0,0.38);
-
+    box-shadow:0 25px 60px rgba(0,0,0,0.38);
     backdrop-filter:blur(18px);
 }
+
 .brand-mark{
     font-family:var(--font-display);
     font-size:1.55rem;
     font-weight:800;
-    letter-spacing:-0.05em;
+    letter-spacing:-0.04em;
 }
 
 .brand-mark span{
@@ -169,29 +126,16 @@ select{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-
     min-height:54px;
     padding:0 26px;
-
     border:none;
     border-radius:16px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #5edcff,
-            #34cfff
-        );
-
+    background:linear-gradient(135deg, #5edcff, #34cfff);
     color:#04111a;
     font-weight:800;
     text-align:center;
-
     cursor:pointer;
-
-    box-shadow:
-        0 10px 30px rgba(34,191,247,0.22);
-
+    box-shadow:0 10px 30px rgba(34,191,247,0.22);
     transition:0.25s ease;
 }
 
@@ -205,8 +149,8 @@ select{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    min-height:50px;
-    padding:0 22px;
+    min-height:54px;
+    padding:0 26px;
     border-radius:16px;
     border:1px solid var(--border-strong);
     color:var(--accent);
@@ -217,10 +161,6 @@ select{
 .outline-btn:hover{
     background:rgba(94,220,255,0.10);
 }
-
-/* =========================
-   Public Base
-========================= */
 
 .public-topbar{
     width:min(1180px, calc(100% - 36px));
@@ -255,16 +195,12 @@ select{
     z-index:2;
 }
 
-/* =========================
-   Home Page
-========================= */
-
 .hero-section{
     min-height:calc(100vh - 96px);
     display:flex;
     align-items:center;
     justify-content:center;
-    padding: 40px 20px;
+    padding:40px 20px;
 }
 
 .hero-card{
@@ -272,7 +208,7 @@ select{
     max-width:900px;
     padding:64px 58px;
     text-align:center;
-    margin-left:auto;
+    margin:0 auto;
 }
 
 .hero-title{
@@ -280,14 +216,14 @@ select{
     font-size:clamp(2.7rem, 5vw, 4.9rem);
     line-height:1.05;
     letter-spacing:-0.045em;
-    margin-bottom:22px;
-    max-width:720px;
+    margin:0 auto 22px;
+    max-width:760px;
     font-weight:800;
 }
 
 .hero-subtitle{
-    margin:0 0 34px;
-    max-width:620px;
+    margin:0 auto 34px;
+    max-width:640px;
     color:var(--muted);
     font-size:1.05rem;
     line-height:1.9;
@@ -300,10 +236,6 @@ select{
     gap:16px;
     flex-wrap:wrap;
 }
-
-/* =========================
-   Auth Pages
-========================= */
 
 .login-wrapper{
     min-height:calc(100vh - 100px);
@@ -328,7 +260,7 @@ select{
 .auth-copy-title,
 .login-title{
     font-family:var(--font-display);
-    letter-spacing:-0.05em;
+    letter-spacing:-0.04em;
 }
 
 .auth-copy-title{
@@ -386,10 +318,6 @@ select{
     font-weight:800;
 }
 
-/* =========================
-   Forms
-========================= */
-
 .form-group{
     margin-bottom:18px;
 }
@@ -408,7 +336,7 @@ select{
 .form-grid{
     display:grid;
     grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:16px;
+    gap:18px;
 }
 
 input[type="text"],
@@ -459,8 +387,8 @@ input:focus,
 #password-strength{
     min-height:22px;
     margin-top:8px;
-    font-size:0.92rem;
-    font-weight:800;
+    font-size:14px;
+    font-weight:700;
     color:var(--muted);
 }
 
@@ -475,10 +403,6 @@ input:focus,
 #password-strength.strong{
     color:var(--success);
 }
-
-/* =========================
-   App Layout / Sidebar
-========================= */
 
 .app-shell{
     min-height:100vh;
@@ -579,10 +503,6 @@ input:focus,
     font-size:1.35rem;
 }
 
-/* =========================
-   Page Headings
-========================= */
-
 .page-head{
     margin-bottom:28px;
 }
@@ -591,7 +511,7 @@ input:focus,
     font-family:var(--font-display);
     font-size:clamp(2.3rem, 5vw, 4rem);
     line-height:1.02;
-    letter-spacing:-0.07em;
+    letter-spacing:-0.06em;
     margin-bottom:14px;
 }
 
@@ -601,10 +521,6 @@ input:focus,
     line-height:1.85;
     font-size:1.02rem;
 }
-
-/* =========================
-   Dashboard
-========================= */
 
 .stats-grid{
     display:grid;
@@ -626,7 +542,7 @@ input:focus,
 .stat-number{
     font-family:var(--font-display);
     font-size:2.4rem;
-    letter-spacing:-0.05em;
+    letter-spacing:-0.04em;
     margin-bottom:8px;
 }
 
@@ -742,14 +658,21 @@ input:focus,
     background:var(--accent);
 }
 
-/* =========================
-   Predict Page
-========================= */
-
 .predict-layout{
     display:grid;
-    grid-template-columns:minmax(0, 1.15fr) minmax(340px, 0.85fr);
+    grid-template-columns:2fr 1fr;
     gap:24px;
+    align-items:start;
+}
+
+.predict-card{
+    padding:28px;
+}
+
+.result-card{
+    position:sticky;
+    top:24px;
+    height:fit-content;
 }
 
 .result-placeholder{
@@ -780,10 +703,6 @@ input:focus,
     border-color:rgba(255,111,145,0.28);
     background:rgba(255,111,145,0.08);
 }
-
-/* =========================
-   Badges / Status Colors
-========================= */
 
 .fraud-text,
 .danger-text{
@@ -836,10 +755,6 @@ input:focus,
     border:1px solid rgba(62,224,143,0.25);
 }
 
-/* =========================
-   Batch Predict
-========================= */
-
 .batch-header h3,
 .history-header h3,
 .transaction-header h3{
@@ -890,10 +805,6 @@ input:focus,
     border:1px solid rgba(255,111,145,0.25);
 }
 
-/* =========================
-   History / Admin
-========================= */
-
 .history-header{
     display:flex;
     justify-content:space-between;
@@ -911,9 +822,69 @@ input:focus,
     margin-bottom:28px;
 }
 
-/* =========================
-   Responsive
-========================= */
+.password-box{
+    position:relative;
+}
+
+.password-box input{
+    padding-right:55px;
+}
+
+.toggle-password{
+    position:absolute;
+    top:50%;
+    right:16px;
+    transform:translateY(-50%);
+    background:none;
+    border:none;
+    color:var(--muted);
+    cursor:pointer;
+    font-size:18px;
+    transition:0.2s ease;
+}
+
+.toggle-password:hover{
+    color:var(--accent);
+}
+
+.flash-wrap{
+    margin:20px 0;
+}
+
+.flash-msg{
+    padding:14px 18px;
+    border-radius:14px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.flash-success{
+    background:rgba(62,224,143,0.12);
+    color:#3ee08f;
+    border:1px solid rgba(62,224,143,0.25);
+}
+
+.flash-error{
+    background:rgba(255,111,145,0.12);
+    color:#ff6f91;
+    border:1px solid rgba(255,111,145,0.25);
+}
+
+.chart-card{
+    padding:24px;
+    margin-bottom:24px;
+}
+
+.chart-box{
+    position:relative;
+    width:100%;
+    height:320px;
+}
+
+.chart-box canvas{
+    width:100% !important;
+    height:100% !important;
+}
 
 @media(max-width:1150px){
     .stats-grid{
@@ -924,6 +895,10 @@ input:focus,
     .predict-layout,
     .auth-layout{
         grid-template-columns:1fr;
+    }
+
+    .result-card{
+        position:static;
     }
 }
 
@@ -950,6 +925,10 @@ input:focus,
 
     .form-grid{
         grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:span 1;
     }
 }
 
@@ -1008,89 +987,4 @@ input:focus,
         transition:none !important;
         scroll-behavior:auto !important;
     }
-}
-
-#password-strength{
-    margin-top:8px;
-    font-size:14px;
-    font-weight:700;
-}
-
-#password-strength.weak{
-    color:#ff6f91;
-}
-
-#password-strength.medium{
-    color:#ffbf57;
-}
-
-#password-strength.strong{
-    color:#3ee08f;
-}
-
-/* =========================
-   Password Toggle
-========================= */
-
-.password-box{
-    position:relative;
-}
-
-.password-box input{
-    padding-right:55px;
-}
-
-.toggle-password{
-    position:absolute;
-    top:50%;
-    right:16px;
-    transform:translateY(-50%);
-    background:none;
-    border:none;
-    color:var(--muted);
-    cursor:pointer;
-    font-size:18px;
-    transition:0.2s ease;
-}
-
-.toggle-password:hover{
-    color:var(--accent);
-}
-
-.flash-wrap{
-    margin:20px 0;
-}
-
-.flash-msg{
-    padding:14px 18px;
-    border-radius:14px;
-    font: weight 700px;margin-bottom:12px;
-}
-
-.flash-success{
-    background:rgba(62,224,143,0,12);
-    color:#3ee08f;
-    border:1px solid rgba(62,224,143,0.25);
-}
-
-.flash-error{
-    background:rga(225,111,145,0.12);
-    color:#ff6f91;
-    border:1px solid rgba(255,11, 145,0.25);
-}
-
-.chart-card{
-    padding:24px;
-    margin-bottom:24px;
-}
-
-.chart-box{
-    position:relative;
-    width:100%;
-    height:320px;
-}
-
-.chart-box canvas{
-    width:100% !important;
-    height:100% !important;
 }

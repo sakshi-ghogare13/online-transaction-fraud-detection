@@ -13,6 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 model = joblib.load("models/fraud_model.pkl")
 scaler = joblib.load("models/scaler.pkl")
 feature_columns = joblib.load("models/feature_columns.pkl")
+label_encoders = joblib.load("models/label_encoders.pkl")
 
 app = Flask(__name__)
 
@@ -25,6 +26,8 @@ app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
 @app.route("/")
 def home():
     return render_template("home.html")
+
+
 # -----------------------------
 # Home / Login
 # -----------------------------
@@ -231,77 +234,63 @@ def predict():
     if request.method == "POST":
 
         amount = float(request.form["amount"])
+        country = request.form["country"]
+        device_type = request.form["device_type"]
+
+        failed_login_attempts = 4 if amount > 20000 else 1
+        previous_transactions_24h = 2 if amount > 20000 else 5
+        unusual_location = 1 if country != "India" else 0
+        vpn_used = 1 if country != "India" else 0
+        multiple_cards_used = 1 if amount > 25000 else 0
+        account_age_days = 60 if amount > 20000 else 600
+        transaction_velocity = 12 if amount > 20000 else 3
+
+        if device_type == "ATM" and amount > 15000:
+            failed_login_attempts = 5
+            transaction_velocity = 10
 
         input_data = {
-            col: 0
-            for col in feature_columns
+            "Time": int(time.time()) % 31536000,
+            "Amount": amount,
+            "Transaction_Type": request.form["transaction_type"],
+            "Merchant_Category": request.form["merchant_category"],
+            "Device_Type": device_type,
+            "City": request.form["city"],
+            "Country": country,
+            "Failed_Login_Attempts": failed_login_attempts,
+            "Previous_Transactions_24H": previous_transactions_24h,
+            "Unusual_Location": unusual_location,
+            "VPN_Used": vpn_used,
+            "Multiple_Cards_Used": multiple_cards_used,
+            "Account_Age_Days": account_age_days,
+            "Transaction_Velocity": transaction_velocity
         }
 
-        input_data["Amount"] = amount
-
-        if "Time" in input_data:
-            input_data["Time"] = int(time.time()) % 172800
+        for column, encoder in label_encoders.items():
+            input_data[column] = encoder.transform([input_data[column]])[0]
 
         input_df = pd.DataFrame([input_data])
-
         input_df = input_df[feature_columns]
 
         input_scaled = scaler.transform(input_df)
 
-        model_prediction = int(
-            model.predict(input_scaled)[0]
-        )
+        model_prediction = int(model.predict(input_scaled)[0])
 
-        risk_score = 72 if model_prediction == 1 else 18
-
-        prediction_text = (
-            "Fraud"
-            if risk_score >= 60
-            else "Legitimate"
-        )
-
-        risk_level = (
-            "High Risk"
-            if risk_score >= 60
-            else "Low Risk"
-        )
+        prediction_text = "Fraud" if model_prediction == 1 else "Legitimate"
+        risk_score = 82 if model_prediction == 1 else 18
+        risk_level = "High Risk" if model_prediction == 1 else "Low Risk"
 
         result = {
-
-            "prediction":
-                "Fraud Transaction"
-                if prediction_text == "Fraud"
-                else "Genuine Transaction",
-
-            "risk_score":
-                risk_score,
-
-            "risk_level":
-                risk_level,
-
-            "risk_class":
-                "high"
-                if prediction_text == "Fraud"
-                else "low",
-
-            "box_class":
-                "prediction-fraud"
-                if prediction_text == "Fraud"
-                else "prediction-safe",
-
-            "icon":
-                "⚠️"
-                if prediction_text == "Fraud"
-                else "✅",
-
-            "message":
-                "This transaction looks suspicious."
-                if prediction_text == "Fraud"
-                else "This transaction appears safe."
+            "prediction": "Fraud Transaction" if prediction_text == "Fraud" else "Genuine Transaction",
+            "risk_score": risk_score,
+            "risk_level": risk_level,
+            "risk_class": "high" if prediction_text == "Fraud" else "low",
+            "box_class": "prediction-fraud" if prediction_text == "Fraud" else "prediction-safe",
+            "icon": "⚠️" if prediction_text == "Fraud" else "✅",
+            "message": "This transaction pattern looks suspicious." if prediction_text == "Fraud" else "This transaction appears safe."
         }
 
         connection = get_connection()
-
         cursor = connection.cursor()
 
         cursor.execute(
@@ -327,14 +316,11 @@ def predict():
         )
 
         connection.commit()
-
         cursor.close()
         connection.close()
 
-    return render_template(
-        "predict.html",
-        result=result
-    )
+    return render_template("predict.html", result=result)
+
 
 # -----------------------------
 # Batch Predict
@@ -357,16 +343,39 @@ def batch_predict():
 
         data = pd.read_csv(file)
 
+        # Remove columns not used by model if present
+        data = data.drop(
+            columns=[
+                "Transaction_ID",
+                "Transaction_Date",
+                "Is_Fraud"
+            ],
+            errors="ignore"
+        )
+
         missing_columns = [
             col for col in feature_columns
             if col not in data.columns
         ]
 
         if missing_columns:
-            flash("Missing columns: " + ", ".join(missing_columns), "error")
+            flash(
+                "Missing columns: " + ", ".join(missing_columns),
+                "error"
+            )
             return redirect(url_for("batch_predict"))
 
+        # Encode categorical columns
+        for column, encoder in label_encoders.items():
+
+            if column in data.columns:
+
+                data[column] = encoder.transform(
+                    data[column].astype(str)
+                )
+
         input_df = data[feature_columns]
+
         input_scaled = scaler.transform(input_df)
 
         predictions = model.predict(input_scaled)
@@ -382,11 +391,23 @@ def batch_predict():
 
             amount = float(data.iloc[index]["Amount"])
 
-            prediction_text = "Fraud" if int(pred) == 1 else "Legitimate"
+            prediction_text = (
+                "Fraud"
+                if int(pred) == 1
+                else "Legitimate"
+            )
 
-            risk_score = 72 if prediction_text == "Fraud" else 18
+            risk_score = (
+                82
+                if prediction_text == "Fraud"
+                else 18
+            )
 
-            risk_level = "High Risk" if prediction_text == "Fraud" else "Low Risk"
+            risk_level = (
+                "High Risk"
+                if prediction_text == "Fraud"
+                else "Low Risk"
+            )
 
             cursor.execute(
                 """
@@ -411,7 +432,6 @@ def batch_predict():
             )
 
             results.append({
-                "Time": data.iloc[index]["Time"],
                 "Amount": amount,
                 "Prediction": prediction_text,
                 "Risk_Level": risk_level,
@@ -422,7 +442,10 @@ def batch_predict():
         cursor.close()
         connection.close()
 
-        flash("Batch prediction completed successfully.", "success")
+        flash(
+            "Batch prediction completed successfully.",
+            "success"
+        )
 
         return render_template(
             "batch_predict.html",
@@ -430,6 +453,7 @@ def batch_predict():
         )
 
     return render_template("batch_predict.html")
+
 
 # -----------------------------
 # History

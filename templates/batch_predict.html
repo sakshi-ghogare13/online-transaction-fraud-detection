@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block title %}Batch Predict | FraudShield AI{% endblock %}
-
 {% block page_name %}Batch Prediction{% endblock %}
 
 {% block content %}
@@ -9,12 +8,10 @@
 <div class="page-head">
     <span class="eyebrow">Batch Transaction Analysis</span>
 
-    <h1 class="dashboard-title">
-        Batch Fraud Prediction
-    </h1>
+    <h1 class="dashboard-title">Batch Fraud Prediction</h1>
 
     <p class="page-subtitle">
-        Upload a CSV file with Time, V1–V28, and Amount columns to analyze multiple transactions.
+        Upload a CSV file with the new fraud dataset columns to analyze multiple transactions.
     </p>
 </div>
 
@@ -24,7 +21,10 @@
         <h3>Upload CSV Transactions</h3>
 
         <p>
-            Analyze multiple transactions at once using the trained ML fraud detection model.
+            Required columns include Amount, Transaction_Type, Merchant_Category,
+            Device_Type, City, Country, Failed_Login_Attempts,
+            Previous_Transactions_24H, Unusual_Location, VPN_Used,
+            Multiple_Cards_Used, Account_Age_Days, and Transaction_Velocity.
         </p>
     </div>
 
@@ -34,30 +34,17 @@
         </div>
     {% endif %}
 
-    <form
-        action="/batch-predict"
-        method="POST"
-        enctype="multipart/form-data"
-        class="batch-form"
-    >
+    <form action="/batch-predict" method="POST" enctype="multipart/form-data" class="batch-form">
 
         <div class="upload-area">
-            <input
-                type="file"
-                name="file"
-                accept=".csv"
-                required
-            >
+            <input type="file" name="file" accept=".csv" required>
 
             <p>
-                Upload CSV file containing: Time, V1–V28, Amount
+                Upload CSV generated from the new synthetic fraud dataset format.
             </p>
         </div>
 
-        <button
-            type="submit"
-            class="custom-btn upload-btn"
-        >
+        <button type="submit" class="custom-btn upload-btn">
             Upload & Predict
         </button>
 
@@ -66,7 +53,6 @@
 </div>
 
 {% if results %}
-
 <div class="glass-card result-table-card">
 
     <div class="transaction-header">
@@ -74,13 +60,10 @@
     </div>
 
     <div class="table-responsive">
-
         <table class="batch-table">
-
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Time</th>
                     <th>Amount</th>
                     <th>Status</th>
                     <th>Risk</th>
@@ -91,7 +74,6 @@
                 {% for row in results %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ row.Time }}</td>
                     <td>₹ {{ row.Amount }}</td>
 
                     <td>
@@ -102,19 +84,14 @@
                         {% endif %}
                     </td>
 
-                    <td>
-                        {{ row.Risk_Level }}
-                    </td>
+                    <td>{{ row.Risk_Level }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
-
         </table>
-
     </div>
 
 </div>
-
 {% endif %}
 
 {% endblock %}
