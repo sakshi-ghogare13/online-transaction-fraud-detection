@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | FraudShield AI{% endblock %}
+
+{% block page_name %}Admin Panel{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+
+    <span class="eyebrow">
+        System Administration
+    </span>
+
+    <h1 class="dashboard-title">
+        Admin Analytics Dashboard
+    </h1>
+
+    <p class="page-subtitle">
+        Monitor users, fraud predictions, and overall system activity.
+    </p>
+
+</div>
+
+
+<div class="stats-grid">
+
+    <div class="glass-card stat-card">
+
+        <p class="stat-label">
+            Total Users
+        </p>
+
+        <h3 class="stat-number">
+            {{ total_users }}
+        </h3>
+
+        <p class="stat-note">
+            Registered accounts
+        </p>
+
+    </div>
+
+
+    <div class="glass-card stat-card">
+
+        <p class="stat-label">
+            Total Predictions
+        </p>
+
+        <h3 class="stat-number">
+            {{ total_predictions }}
+        </h3>
+
+        <p class="stat-note">
+            Transactions analyzed
+        </p>
+
+    </div>
+
+
+    <div class="glass-card stat-card">
+
+        <p class="stat-label">
+            Fraud Cases
+        </p>
+
+        <h3 class="stat-number fraud-text">
+            {{ total_fraud }}
+        </h3>
+
+        <p class="stat-note">
+            Suspicious transactions
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="glass-card table-card">
+
+    <div class="card-head">
+
+        <h3 class="card-title">
+            Latest Prediction Activity
+        </h3>
+
+        <span class="card-chip">
+            Admin View
+        </span>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for row in latest_predictions %}
+
+                <tr>
+
+                    <td>
+                        {{ row.username }}
+                    </td>
+
+                    <td>
+                        {{ row.email }}
+                    </td>
+
+                    <td>
+                        ₹ {{ row.amount }}
+                    </td>
+
+                    <td>
+
+                        {% if row.prediction == "Fraud" %}
+
+                            <span class="risk-badge high">
+                                Fraud
+                            </span>
+
+                        {% else %}
+
+                            <span class="risk-badge low">
+                                Legitimate
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ row.created_at }}
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="5">
+                        No activity found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

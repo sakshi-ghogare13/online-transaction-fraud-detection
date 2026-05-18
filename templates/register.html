@@ -1,0 +1,120 @@
+{% extends "public_base.html" %}
+
+{% block title %}Register | FraudShield AI{% endblock %}
+
+{% block content %}
+
+<div class="login-wrapper">
+    <div class="auth-layout">
+
+        <div class="glass-card auth-copy">
+            <span class="eyebrow">Create Access</span>
+
+            <h2 class="auth-copy-title">
+                Build your analyst account.
+            </h2>
+
+            <p class="auth-copy-text">
+                Register to access FraudShield AI, monitor flagged transactions,
+                and use a cleaner dashboard environment built for project demos
+                and portfolio presentation.
+            </p>
+
+            <ul class="feature-list">
+                <li>
+                    <span class="feature-dot"></span>
+                    Cleaner auth flow without sidebar clutter
+                </li>
+
+                <li>
+                    <span class="feature-dot"></span>
+                    Password guidance with live strength feedback
+                </li>
+
+                <li>
+                    <span class="feature-dot"></span>
+                    Better visual hierarchy and calmer styling
+                </li>
+            </ul>
+        </div>
+
+        <div class="glass-card login-card">
+            <h1 class="login-title">
+                Create Account
+            </h1>
+
+            <p class="login-subtitle">
+                Register to access FraudShield AI dashboard
+            </p>
+
+            <form method="POST" action="/register">
+
+                <div class="form-group">
+                    <label>Full name</label>
+
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter your full name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Email address</label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+
+                    <div class="password-box">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create password"
+                            minlength="8"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+                    </div>
+
+                    <small class="field-hint">
+                        Use 8 or more characters. Longer is stronger.
+                    </small>
+
+                    <p id="password-strength">
+                        Use 8 or more characters. Longer is stronger.
+                    </p>
+                </div>
+
+                <button class="custom-btn login-btn" type="submit">
+                    Create Account
+                </button>
+
+            </form>
+
+            <p class="register-text">
+                Already have an account?
+                <a href="/login">Login</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

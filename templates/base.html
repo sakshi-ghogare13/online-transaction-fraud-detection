@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FraudShield AI{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<body class="site-body app-body">
+
+    <div class="bg-blur blur-a"></div>
+    <div class="bg-blur blur-b"></div>
+
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a href="/dashboard" class="brand-mark sidebar-brand">FraudShield <span>AI</span></a>
+            <p class="sidebar-tagline">Fraud intelligence console</p>
+
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="sidebar-link {% if request.path == '/dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="/predict" class="sidebar-link {% if request.path == '/predict' %}active{% endif %}">Predict</a>
+                <a href="/batch-predict" class="sidebar-link {% if request.path == '/batch-predict' %}active{% endif %}">Batch Predict</a>
+                <a href="/history" class="sidebar-link {% if request.path == '/history' %}active{% endif %}">History</a>
+                <a href="/admin" class="sidebar-link {% if request.path == '/admin' %}active{% endif %}">Admin</a>
+                <a href="/" class="sidebar-link">Public Site</a>
+                <a href="/logout" class="sidebar-link">Logout</a>
+            </nav>
+
+            <div class="sidebar-foot">
+                <div class="status-chip">
+                    <span class="status-dot"></span>
+                    Model Ready
+                </div>
+            </div>
+        </aside>
+
+        <section class="content-shell">
+            <header class="app-topbar">
+                <div>
+                    <p class="topbar-kicker">Fraud Monitoring</p>
+                    <h1 class="topbar-title">{% block page_name %}Dashboard{% endblock %}</h1>
+                </div>
+
+                <div class="status-chip">
+                    <span class="status-dot"></span>
+                    Live Session
+                </div>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-wrap">
+                        {% for category, message in messages %}
+                            <div class="flash-msg {% if category == 'error' %}flash-error{% else %}flash-success{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="{{ url_for('static', filename='js/dashboard_charts.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</body>
+</html>

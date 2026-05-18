@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}History | FraudShield AI{% endblock %}
+
+{% block page_name %}Prediction History{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+    <span class="eyebrow">Transaction Logs</span>
+
+    <h1 class="dashboard-title">
+        Prediction History
+    </h1>
+
+    <p class="page-subtitle">
+        View all previously analyzed transactions and export your fraud analysis records.
+    </p>
+</div>
+
+<div class="glass-card history-card">
+
+    <div class="history-header">
+
+        <div>
+            <h3>Recent Fraud Analysis</h3>
+
+            <p>
+                View all previously analyzed transactions and fraud predictions.
+            </p>
+        </div>
+
+        <a
+            href="/export-history"
+            class="custom-btn"
+        >
+            Export CSV
+        </a>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="history-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Risk</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for row in transactions %}
+
+                <tr>
+                    <td>TRX{{ row.transaction_id }}</td>
+
+                    <td>₹ {{ row.amount }}</td>
+
+                    <td>
+                        {% if row.prediction == "Fraud" %}
+                            <span class="risk-badge high">Fraud</span>
+                        {% else %}
+                            <span class="risk-badge low">Legitimate</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ row.risk_level }}
+                    </td>
+
+                    <td>
+                        {{ row.created_at }}
+                    </td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="5">
+                        No prediction history found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | FraudShield AI{% endblock %}
+
+{% block page_name %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+    <span class="eyebrow">
+        Fraud Intelligence
+    </span>
+
+    <h1 class="dashboard-title">
+        Fraud Detection Dashboard
+    </h1>
+
+    <p class="page-subtitle">
+        Monitor transaction activity, fraud alerts, and recent prediction results.
+    </p>
+</div>
+
+<div class="stats-grid">
+
+    <div class="glass-card stat-card">
+        <p class="stat-label">Total Transactions</p>
+        <h3 class="stat-number">{{ total_transactions }}</h3>
+        <p class="stat-note">Dataset transactions analyzed</p>
+    </div>
+
+    <div class="glass-card stat-card">
+        <p class="stat-label">Fraud Detected</p>
+        <h3 class="stat-number fraud-text">{{ fraud_detected }}</h3>
+        <p class="stat-note">Suspicious transactions found</p>
+    </div>
+
+    <div class="glass-card stat-card">
+        <p class="stat-label">Legitimate</p>
+        <h3 class="stat-number safe-text">{{ legitimate }}</h3>
+        <p class="stat-note">Safe transactions identified</p>
+    </div>
+
+    <div class="glass-card stat-card">
+        <p class="stat-label">High Risk Alerts</p>
+        <h3 class="stat-number warning-text">{{ high_risk }}</h3>
+        <p class="stat-note">Require review</p>
+    </div>
+
+</div>
+
+<div class="glass-card insight-card chart-card">
+
+    <div class="card-head">
+        <h3 class="card-title">
+            Fraud vs Legitimate
+        </h3>
+
+        <span class="card-chip">
+            Live Chart
+        </span>
+    </div>
+
+    <div class="chart-box">
+
+        <canvas
+            id="fraudChart"
+            data-fraud="{{ fraud_detected }}"
+            data-legitimate="{{ legitimate }}"
+        ></canvas>
+
+    </div>
+
+</div>
+
+
+<div class="glass-card insight-card chart-card">
+
+    <div class="card-head">
+        <h3 class="card-title">
+            Transaction Trend
+        </h3>
+
+        <span class="card-chip">
+            Analytics
+        </span>
+    </div>
+
+    <div class="chart-box">
+
+        <canvas
+            id="trendChart"
+            data-labels='{{ trend_data | map(attribute="day") | list | tojson }}'
+            data-values='{{ trend_data | map(attribute="total") | list | tojson }}'
+        ></canvas>
+
+    </div>
+
+</div>
+
+<div class="dashboard-grid">
+
+    <div class="glass-card table-card">
+
+        <div class="card-head">
+            <h3 class="card-title">
+                Recent Transactions
+            </h3>
+
+            <span class="card-chip">
+                Live Feed
+            </span>
+        </div>
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Risk</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+    {% for row in recent_transactions %}
+
+    <tr>
+        <td>TRX{{ row.transaction_id }}</td>
+
+        <td>₹ {{ row.amount }}</td>
+
+        <td>
+            {% if row.prediction == "Fraud" %}
+                <span class="fraud-text">Fraud</span>
+            {% else %}
+                <span class="safe-text">Legitimate</span>
+            {% endif %}
+        </td>
+
+        <td>
+            {% if row.risk_level == "High Risk" %}
+                <span class="risk-badge high">High</span>
+            {% else %}
+                <span class="risk-badge low">Low</span>
+            {% endif %}
+        </td>
+    </tr>
+
+    {% else %}
+
+    <tr>
+        <td colspan="4">
+            No recent transactions found.
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</tbody>
+
+        </table>
+
+    </div>
+
+    <div class="dashboard-side">
+
+        <div class="glass-card insight-card">
+            <div class="card-head">
+                <h3 class="card-title">
+                    Model Status
+                </h3>
+
+                <span class="card-chip">
+                    Active
+                </span>
+            </div>
+
+            <ul class="insight-list">
+                <li>Trained model loaded successfully.</li>
+                <li>Scaler and feature columns are ready.</li>
+                <li>Batch prediction and single prediction available.</li>
+            </ul>
+        </div>
+
+        <div class="glass-card insight-card">
+            <div class="card-head">
+                <h3 class="card-title">
+                    Quick Actions
+                </h3>
+
+                <span class="card-chip">
+                    Tools
+                </span>
+            </div>
+
+            <ul class="insight-list">
+                <li>
+                    <a href="/predict">Analyze single transaction</a>
+                </li>
+
+                <li>
+                    <a href="/batch-predict">Upload CSV for batch prediction</a>
+                </li>
+
+                <li>
+                    <a href="/history">View prediction history</a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

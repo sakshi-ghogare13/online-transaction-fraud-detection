@@ -1,0 +1,121 @@
+{% extends "public_base.html" %}
+
+{% block title %}Login | FraudShield AI{% endblock %}
+
+{% block content %}
+
+<div class="login-wrapper">
+
+    <div class="auth-layout">
+
+        <div class="glass-card auth-copy">
+
+            <span class="eyebrow">
+                Secure Access
+            </span>
+
+            <h2 class="auth-copy-title">
+                Welcome back to FraudShield AI.
+            </h2>
+
+            <p class="auth-copy-text">
+                Access your fraud detection dashboard, run single transaction prediction,
+                screen batch CSV uploads, and review model-backed alerts in a cleaner,
+                premium interface.
+            </p>
+
+            <ul class="feature-list">
+
+                <li>
+                    <span class="feature-dot"></span>
+                    Single-transaction risk analysis
+                </li>
+
+                <li>
+                    <span class="feature-dot"></span>
+                    Batch fraud screening with CSV upload
+                </li>
+
+                <li>
+                    <span class="feature-dot"></span>
+                    Cleaner fintech-style analyst dashboard
+                </li>
+
+            </ul>
+
+        </div>
+
+        <div class="glass-card login-card">
+
+            <h1 class="login-title">
+                Login
+            </h1>
+
+            <p class="login-subtitle">
+                Sign in to continue to the fraud monitoring console
+            </p>
+
+            <form method="POST" action="/login">
+
+                <div class="form-group">
+
+                    <label>Email address</label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Password</label>
+
+                    <div class="password-box">
+
+                        <input
+                            type="password"
+                            id="login-password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="custom-btn login-btn"
+                    type="submit"
+                >
+                    Login
+                </button>
+
+            </form>
+
+            <p class="register-text">
+                Don’t have an account?
+                <a href="/register">
+                    Create Account
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

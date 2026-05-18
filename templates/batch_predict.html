@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Batch Predict | FraudShield AI{% endblock %}
+
+{% block page_name %}Batch Prediction{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+    <span class="eyebrow">Batch Transaction Analysis</span>
+
+    <h1 class="dashboard-title">
+        Batch Fraud Prediction
+    </h1>
+
+    <p class="page-subtitle">
+        Upload a CSV file with Time, V1–V28, and Amount columns to analyze multiple transactions.
+    </p>
+</div>
+
+<div class="glass-card batch-card">
+
+    <div class="batch-header">
+        <h3>Upload CSV Transactions</h3>
+
+        <p>
+            Analyze multiple transactions at once using the trained ML fraud detection model.
+        </p>
+    </div>
+
+    {% if error %}
+        <div class="error-box">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form
+        action="/batch-predict"
+        method="POST"
+        enctype="multipart/form-data"
+        class="batch-form"
+    >
+
+        <div class="upload-area">
+            <input
+                type="file"
+                name="file"
+                accept=".csv"
+                required
+            >
+
+            <p>
+                Upload CSV file containing: Time, V1–V28, Amount
+            </p>
+        </div>
+
+        <button
+            type="submit"
+            class="custom-btn upload-btn"
+        >
+            Upload & Predict
+        </button>
+
+    </form>
+
+</div>
+
+{% if results %}
+
+<div class="glass-card result-table-card">
+
+    <div class="transaction-header">
+        <h3>Prediction Results</h3>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="batch-table">
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Time</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Risk</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ row.Time }}</td>
+                    <td>₹ {{ row.Amount }}</td>
+
+                    <td>
+                        {% if row.Prediction == "Fraud" %}
+                            <span class="risk-badge high">Fraud</span>
+                        {% else %}
+                            <span class="risk-badge low">Legitimate</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ row.Risk_Level }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
