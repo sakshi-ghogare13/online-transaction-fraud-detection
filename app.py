@@ -1,27 +1,31 @@
+from logger import logger
 from datetime import datetime 
 import joblib
 import pandas as pd
 # add these imports
 import time
 import csv
-from flask import Response
-from flask import Flask, render_template, request, flash, redirect, url_for,session
+from flask import Flask, render_template, request, flash, redirect, url_for,session, Response
 
 from database import get_connection
 from werkzeug.security import generate_password_hash, check_password_hash
+
+
+app = Flask(__name__)
+
+app.secret_key = "fraud_detection_secret"
+
+logger.info("Fraud detection app started")
+
+# Optional hardening for uploads
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
 
 model = joblib.load("models/fraud_model.pkl")
 scaler = joblib.load("models/scaler.pkl")
 feature_columns = joblib.load("models/feature_columns.pkl")
 label_encoders = joblib.load("models/label_encoders.pkl")
 
-app = Flask(__name__)
-
-app.secret_key = "fraud_detection_secret"
-
-# Optional hardening for uploads
-app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
-
+logger.info("Model, scaler, feature columns and label encoders loaded successfully")
 
 @app.route("/")
 def home():
@@ -233,6 +237,8 @@ def predict():
 
     if request.method == "POST":
 
+        logger.info("Prediction requst received")
+
         amount = float(request.form["amount"])
         country = request.form["country"]
         device_type = request.form["device_type"]
@@ -274,11 +280,21 @@ def predict():
 
         input_scaled = scaler.transform(input_df)
 
+        probability = model.predict_proba(input_scaled)[0]
+
+        fraud_percentage = round(probability[1] * 100, 2)
+
         model_prediction = int(model.predict(input_scaled)[0])
 
         prediction_text = "Fraud" if model_prediction == 1 else "Legitimate"
-        risk_score = 82 if model_prediction == 1 else 18
-        risk_level = "High Risk" if model_prediction == 1 else "Low Risk"
+        logger.info(f"Prediction result: {prediction_text}")
+
+        risk_score = fraud_percentage
+
+        risk_level = "High Risk" if risk_score >= 70 else "Low Risk"
+
+        logger.info(f"Fraud probability: {risk_score}%")
+        logger.info(f"Risk level: {risk_level}")
 
         result = {
             "prediction": "Fraud Transaction" if prediction_text == "Fraud" else "Genuine Transaction",
@@ -289,6 +305,8 @@ def predict():
             "icon": "⚠️" if prediction_text == "Fraud" else "✅",
             "message": "This transaction pattern looks suspicious." if prediction_text == "Fraud" else "This transaction appears safe."
         }
+
+        logger.info("Saving transaction to database")
 
         connection = get_connection()
         cursor = connection.cursor()
@@ -335,15 +353,20 @@ def batch_predict():
 
     if request.method == "POST":
 
+        logger.info("Batch prediction request received")
+
         file = request.files.get("file")
 
         if file is None or file.filename == "":
+            logger.warning("No CSV file uploaded")
             flash("Please upload a CSV file.", "error")
             return redirect(url_for("batch_predict"))
 
-        data = pd.read_csv(file)
+        logger.info(f"Uploaded file: {file.filename}")
 
-        # Remove columns not used by model if present
+        data = pd.read_csv(file)
+        logger.info("CSV file loaded successfully")
+
         data = data.drop(
             columns=[
                 "Transaction_ID",
@@ -365,22 +388,23 @@ def batch_predict():
             )
             return redirect(url_for("batch_predict"))
 
-        # Encode categorical columns
         for column, encoder in label_encoders.items():
 
             if column in data.columns:
-
                 data[column] = encoder.transform(
                     data[column].astype(str)
                 )
 
         input_df = data[feature_columns]
-
         input_scaled = scaler.transform(input_df)
 
         predictions = model.predict(input_scaled)
+        probabilities = model.predict_proba(input_scaled)
+
+        logger.info("Batch prediction completed")
 
         batch_id = "BATCH_" + str(int(time.time()))
+        logger.info(f"Generated Batch ID: {batch_id}")
 
         results = []
 
@@ -388,6 +412,8 @@ def batch_predict():
         cursor = connection.cursor()
 
         for index, pred in enumerate(predictions):
+
+            logger.info(f"Processing transaction {index + 1}")
 
             amount = float(data.iloc[index]["Amount"])
 
@@ -397,17 +423,18 @@ def batch_predict():
                 else "Legitimate"
             )
 
-            risk_score = (
-                82
-                if prediction_text == "Fraud"
-                else 18
-            )
+            fraud_percentage = round(probabilities[index][1] * 100, 2)
+
+            risk_score = fraud_percentage
 
             risk_level = (
                 "High Risk"
-                if prediction_text == "Fraud"
+                if risk_score >= 70
                 else "Low Risk"
             )
+
+            logger.info(f"Prediction: {prediction_text}")
+            logger.info(f"Fraud probability: {risk_score}%")
 
             cursor.execute(
                 """
@@ -439,8 +466,11 @@ def batch_predict():
             })
 
         connection.commit()
+        logger.info("Batch transactions saved successfully")
+
         cursor.close()
         connection.close()
+        logger.info("Database connection closed")
 
         flash(
             "Batch prediction completed successfully.",
