@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 .env
 models/*.pkl
-dataset/creditcard.csv
+dataset/synthetic_fraud_dataset.csv
 uploads/
 results/
 fraud.log
