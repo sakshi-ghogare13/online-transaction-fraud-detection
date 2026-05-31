@@ -6,3 +6,4 @@ models/*.pkl
 dataset/creditcard.csv
 uploads/
 results/
+fraud.log

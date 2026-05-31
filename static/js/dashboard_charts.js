@@ -1,11 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    if (typeof Chart === "undefined") {
+        console.error("Chart.js is not loaded.");
+        return;
+    }
+
     const fraudChart = document.getElementById("fraudChart");
 
     if (fraudChart) {
-
-        const fraud = Number(fraudChart.dataset.fraud || 0);
-        const legitimate = Number(fraudChart.dataset.legitimate || 0);
+        const fraud = Number(fraudChart.dataset.fraud) || 0;
+        const legitimate = Number(fraudChart.dataset.legitimate) || 0;
 
         new Chart(fraudChart, {
             type: "doughnut",
@@ -33,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 plugins: {
                     legend: {
+                        position: "bottom",
                         labels: {
                             color: "#eef6ff"
                         }
@@ -42,11 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
     const trendChart = document.getElementById("trendChart");
 
     if (trendChart) {
-
         const labels = JSON.parse(trendChart.dataset.labels || "[]");
         const values = JSON.parse(trendChart.dataset.values || "[]");
 
@@ -57,12 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 labels: labels,
 
                 datasets: [{
-                    label: "Transactions",
+                    label: "Daily Transactions",
                     data: values,
-                    fill: false,
+                    fill: true,
                     tension: 0.4,
                     borderColor: "rgba(94, 220, 255, 1)",
-                    backgroundColor: "rgba(94, 220, 255, 0.25)",
+                    backgroundColor: "rgba(94, 220, 255, 0.18)",
                     borderWidth: 3,
                     pointRadius: 4
                 }]
@@ -74,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 plugins: {
                     legend: {
+                        position: "bottom",
                         labels: {
                             color: "#eef6ff"
                         }
