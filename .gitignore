@@ -1,10 +1,15 @@
 venv/
 __pycache__/
 *.pyc
+
 .env
-models/*.pkl
-dataset/creditcard.csv
+
+dataset/systhetic_fraud_dataset.csv
+
 uploads/
 results/
 
 fraud.log
+*.log
+
+.ipynb_checkpoints/
