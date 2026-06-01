@@ -58,7 +58,7 @@ def get_default_value(column_name):
         "Device_Type": "Android",
         "City": "Pune",
         "Country": "India",
-        "Day_Of_Week": "0",
+        "Day_Of_Week": 0,
 
         # Numerical / binary defaults
         "International_Transaction": 0,
@@ -88,6 +88,14 @@ def fix_common_category_mismatch(column, value):
         value = "Bank Transfer"
 
     return value
+
+def get_risk_level(risk_score):
+    if risk_score >= 70:
+        return "High Risk"
+    elif risk_score >= 40:
+        return "Medium Risk"
+    else:
+        return "Low Risk"
 
 
 def prepare_model_input(input_data):
@@ -241,22 +249,32 @@ def login():
 
         user = cursor.fetchone()
 
-        cursor.close()
-        connection.close()
-
         if user and check_password_hash(user["password"], password):
+
+            if user["email"] == "sakshighogare1312@gmail.com":
+                cursor.execute(
+                    "UPDATE users SET role=%s WHERE email=%s",
+                    ("admin", user["email"])
+                )
+                connection.commit()
+                user["role"] = "admin"
 
             session["user_id"] = user["user_id"]
             session["username"] = user["username"]
 
+            cursor.close()
+            connection.close()
+
             flash("Login successful.", "success")
             return redirect(url_for("dashboard"))
+
+        cursor.close()
+        connection.close()
 
         flash("Invalid email or password.", "error")
         return redirect(url_for("login"))
 
     return render_template("login.html")
-
 
 # -----------------------------
 # Register
@@ -270,6 +288,9 @@ def register():
         username = request.form["username"]
         email = request.form["email"]
         password = generate_password_hash(request.form["password"])
+
+        # Make only your email admin
+        role = "admin" if email == "sakshighogare1312@gmail.com" else "user"
 
         connection = get_connection()
         cursor = connection.cursor(dictionary=True)
@@ -293,7 +314,7 @@ def register():
             INSERT INTO users(username, email, password, role)
             VALUES(%s, %s, %s, %s)
             """,
-            (username, email, password, "user")
+            (username, email, password, role)
         )
 
         connection.commit()
@@ -469,8 +490,7 @@ def predict():
             logger.info(f"Prediction result: {prediction_text}")
 
             risk_score = fraud_percentage
-            risk_level = "High Risk" if risk_score >= 70 else "Low Risk"
-
+            risk_level = get_risk_level(risk_score)
             logger.info(f"Fraud probability: {risk_score}%")
             logger.info(f"Risk level: {risk_level}")
 
@@ -594,11 +614,11 @@ def batch_predict():
                 fraud_percentage = round(probabilities[index][1] * 100, 2)
 
                 risk_score = fraud_percentage
-                risk_level = "High Risk" if risk_score >= 70 else "Low Risk"
+                risk_level = get_risk_level(risk_score)
 
                 logger.info(f"Prediction: {prediction_text}")
-                logger.info(f"Fraud probability: {risk_score}%")
-
+                logger.info(f"Risk Score: {risk_score}%")
+                logger.info(f"Risk Level: {risk_level}")
                 cursor.execute(
                     """
                     INSERT INTO transactions(
